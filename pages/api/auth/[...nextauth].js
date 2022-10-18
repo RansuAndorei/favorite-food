@@ -1,14 +1,13 @@
-import NextAuth from 'next-auth';
 import EmailProvider from 'next-auth/providers/email';
-import GoogleProvider from 'next-auth/providers/google';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import { prisma } from '@/lib/prisma';
-import nodemailer from 'nodemailer';
+import NextAuth, { Session, User } from "next-auth";
 import Handlebars from 'handlebars';
 import { readFileSync } from 'fs';
 import path from 'path';
+import nodemailer from "nodemailer";
+import GoogleProvider from 'next-auth/providers/google';
+import { prisma } from '@/lib/prisma';
 
-// Email sender
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_SERVER_HOST,
   port: process.env.EMAIL_SERVER_PORT,
@@ -61,16 +60,12 @@ const sendWelcomeEmail = async ({ user }) => {
 };
 
 export default NextAuth({
-  pages: {
-    signIn: '/',
-    signOut: '/',
-    error: '/',
-    verifyRequest: '/',
-  },
   providers: [
     EmailProvider({
-      maxAge: 10 * 60,
-      sendVerificationRequest,
+      // server: process.env.EMAIL_SERVER,
+      // from: process.env.EMAIL_FROM,
+      maxAge: 10 * 60, // Magic links are valid for 10 min only
+      sendVerificationRequest
     }),
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
@@ -78,5 +73,27 @@ export default NextAuth({
     }),
   ],
   adapter: PrismaAdapter(prisma),
+  pages: {
+    signIn: '/',
+    signOut: '/',
+    error: '/',
+    verifyRequest: '/',
+  },
   events: { createUser: sendWelcomeEmail },
+  callbacks: {
+    async jwt({token, user, account, profile, isNewUser}) {
+        user && (token.user = user)
+        return token
+    },
+    async session({session, token, user}) {
+        session = {
+            ...session,
+            user: {
+                id: user.id,
+                ...session.user
+            }
+        }
+        return session
+    }
+}
 });

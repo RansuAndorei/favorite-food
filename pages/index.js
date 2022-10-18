@@ -9,11 +9,12 @@ export async function getServerSideProps() {
   return {
     props: {
       homes: JSON.parse(JSON.stringify(homes)),
-    },
+    }
   };
 }
 
-export default function Home({ homes = [] }) {
+
+export default function Home({homes=[]}) {
   return (
     <Layout>
       <h1 className="text-xl font-medium text-gray-800">

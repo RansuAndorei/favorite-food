@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
-import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { Formik, Form } from 'formik';
 import Input from '@/components/Input';
 import ImageUpload from '@/components/ImageUpload';
+import axios from "axios";
 
 const ListingSchema = Yup.object().shape({
   title: Yup.string().trim().required(),
@@ -78,7 +78,7 @@ const ListingForm = ({
 
   return (
     <div>
-      <div className="mb-8 max-w-md">
+      <div className="max-w-md mb-8">
         <ImageUpload
           initialImage={{ src: image, alt: initialFormValues.title }}
           onChangePicture={upload}
@@ -152,7 +152,7 @@ const ListingForm = ({
               <button
                 type="submit"
                 disabled={disabled || !isValid}
-                className="bg-rose-600 text-white py-2 px-6 rounded-md focus:outline-none focus:ring-4 focus:ring-rose-600 focus:ring-opacity-50 hover:bg-rose-500 transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-rose-600"
+                className="px-6 py-2 text-white transition rounded-md bg-rose-600 focus:outline-none focus:ring-4 focus:ring-rose-600 focus:ring-opacity-50 hover:bg-rose-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-rose-600"
               >
                 {isSubmitting ? 'Submitting...' : buttonText}
               </button>

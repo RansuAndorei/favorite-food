@@ -1,7 +1,7 @@
-import { getSession } from 'next-auth/react';
-import axios from 'axios';
 import Layout from '@/components/Layout';
 import ListingForm from '@/components/ListingForm';
+import axios from 'axios';
+import { getSession } from 'next-auth/react';
 
 export async function getServerSideProps(context) {
   // Check if user is authenticated
@@ -16,15 +16,16 @@ export async function getServerSideProps(context) {
       },
     };
   }
-
+  
   return {
-    props: {},
-  };
+    props: {}
+  }
 }
 
-const Create = () => {
-  const addHome = data => axios.post('/api/homes', data);
 
+const Create = () => {
+    const addHome = data => axios.post('/api/homes', data);
+	
   return (
     <Layout>
       <div className="max-w-screen-sm mx-auto">

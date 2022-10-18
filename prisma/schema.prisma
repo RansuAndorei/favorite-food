@@ -10,6 +10,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Home {
+  id          String     @id @default(cuid())
+  image       String?
+  title       String
+  description String
+  price       Float
+  guests      Int
+  beds        Int
+  baths       Int
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  owner       User       @relation("owner", fields: [ownerId], references: [id])
+  ownerId     String
+  isPublic    Boolean    @default(true)
+  Favorites   Favorite[]
+}
+
+model Favorite {
+  id     Int    @id @default(autoincrement())
+  homeId String
+  home   Home   @relation(fields: [homeId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@unique([homeId, userId])
+}
+
 model Account {
   id                 String  @id @default(cuid())
   userId             String
@@ -40,14 +67,15 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  listedHomes   Home[]
+  listedHomes   Home[]     @relation("owner")
+  Favorites     Favorite[]
 }
 
 model VerificationToken {
@@ -56,19 +84,4 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-}
-
-model Home {
-  id          String   @id @default(cuid())
-  image       String?
-  title       String
-  description String
-  price       Float
-  guests      Int
-  beds        Int
-  baths       Int
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  owner       User     @relation(fields: [ownerId], references: [id])
-  ownerId     String
 }
