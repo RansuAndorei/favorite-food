@@ -4,6 +4,8 @@
     "paths": {
       "@/components/*": ["components/*"],
       "@/lib/*": ["lib/*"]
-    }
+    },
+    "jsx": "react",
+    "types": ["node", "jest", "@testing-library/jest-dom"]
   }
 }

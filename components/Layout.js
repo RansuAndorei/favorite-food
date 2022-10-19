@@ -1,40 +1,40 @@
-import { Fragment, useState } from 'react';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import Link from 'next/link';
-import Image from 'next/image';
-import PropTypes from 'prop-types';
-import AuthModal from './AuthModal';
-import { Menu, Transition } from '@headlessui/react';
+import { Fragment, useState } from "react";
+import { useRouter } from "next/router";
+import Head from "next/head";
+import Link from "next/link";
+import Image from "next/image";
+import PropTypes from "prop-types";
+import AuthModal from "./AuthModal";
+import DetailsModal from "./DetailsModal";
+import { Menu, Transition } from "@headlessui/react";
 import {
   HeartIcon,
-  HomeIcon,
+  CakeIcon,
   LogoutIcon,
   PlusIcon,
-  SparklesIcon,
   UserIcon,
-} from '@heroicons/react/outline';
-import { ChevronDownIcon } from '@heroicons/react/solid';
-import { signOut, useSession } from 'next-auth/react';
+} from "@heroicons/react/outline";
+import { ChevronDownIcon } from "@heroicons/react/solid";
+import { signOut, useSession } from "next-auth/react";
 
 const menuItems = [
   {
-    label: 'List a new home',
+    label: "List a new food",
     icon: PlusIcon,
-    href: '/create',
+    href: "/create",
   },
   {
-    label: 'My homes',
-    icon: HomeIcon,
-    href: '/homes',
+    label: "My foods",
+    icon: CakeIcon,
+    href: "/my-foods",
   },
   {
-    label: 'Favorites',
+    label: "Favorites",
     icon: HeartIcon,
-    href: '/favorites',
+    href: "/favorites",
   },
   {
-    label: 'Logout',
+    label: "Logout",
     icon: LogoutIcon,
     onClick: () => signOut(),
   },
@@ -43,7 +43,7 @@ const menuItems = [
 const Layout = ({ children = null }) => {
   const { data: session, status } = useSession();
   const user = session?.user;
-  const isLoadingUser = status === 'loading';
+  const isLoadingUser = status === "loading";
 
   const router = useRouter();
 
@@ -51,14 +51,13 @@ const Layout = ({ children = null }) => {
 
   const openModal = () => setShowModal(true);
   const closeModal = () => setShowModal(false);
-
   return (
     <>
       <Head>
-        <title>SupaVacation | The Modern Dev</title>
+        <title>FavoriteFoods</title>
         <meta
           name="title"
-          content="Learn how to Build a Fullstack App with Next.js, PlanetScale & Prisma | The Modern Dev"
+          content="Learn how to Build a Fullstack App with Next.js, PlanetScale & Prisma"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
@@ -69,21 +68,22 @@ const Layout = ({ children = null }) => {
             <div className="flex items-center justify-between h-full px-4 space-x-4">
               <Link href="/">
                 <a className="flex items-center space-x-1">
-                  <SparklesIcon className="w-8 h-8 shrink-0 text-rose-500" />
+                  <CakeIcon className="w-8 h-8 shrink-0 text-rose-500" />
                   <span className="text-xl font-semibold tracking-wide">
-                    Supa<span className="text-rose-600">Vacation</span>
+                    Favorite<span className="text-rose-600">Foods</span>
                   </span>
                 </a>
               </Link>
               <div className="flex items-center space-x-4">
                 <button
+                  id="addFoodButton"
                   onClick={() => {
-                    session?.user ? router.push('/create') : openModal();
+                    session?.user ? router.push("/create") : openModal();
                   }}
                   className="hidden px-3 py-1 transition rounded-md sm:block hover:bg-gray-200"
                 >
                   <a className="hidden px-3 py-1 transition rounded-md sm:block hover:bg-gray-200">
-                    List your home
+                    List your Favorite Food
                   </a>
                 </button>
                 {isLoadingUser ? (
@@ -91,11 +91,14 @@ const Layout = ({ children = null }) => {
                 ) : user ? (
                   <Menu as="div" className="relative z-50">
                     <Menu.Button className="flex items-center space-x-px group">
-                      <div className="relative flex items-center justify-center overflow-hidden bg-gray-200 rounded-full shrink-0 w-9 h-9">
+                      <div
+                        className="relative flex items-center justify-center overflow-hidden bg-gray-200 rounded-full shrink-0 w-9 h-9"
+                        id="dropdown"
+                      >
                         {user?.image ? (
                           <Image
                             src={user?.image}
-                            alt={user?.name || 'Avatar'}
+                            alt={user?.name || "Avatar"}
                             layout="fill"
                           />
                         ) : (
@@ -119,7 +122,7 @@ const Layout = ({ children = null }) => {
                             {user?.image ? (
                               <Image
                                 src={user?.image}
-                                alt={user?.name || 'Avatar'}
+                                alt={user?.name || "Avatar"}
                                 layout="fill"
                               />
                             ) : (
@@ -140,6 +143,7 @@ const Layout = ({ children = null }) => {
                               <div
                                 key={label}
                                 className="px-2 last:border-t last:pt-2 last:mt-2"
+                                id={label}
                               >
                                 <Menu.Item>
                                   {href ? (
@@ -153,6 +157,7 @@ const Layout = ({ children = null }) => {
                                     <button
                                       className="flex items-center w-full px-4 py-2 space-x-2 rounded-md hover:bg-gray-100"
                                       onClick={onClick}
+                                      id="dropDown"
                                     >
                                       <Icon className="w-5 h-5 text-gray-500 shrink-0" />
                                       <span>{label}</span>
@@ -168,6 +173,7 @@ const Layout = ({ children = null }) => {
                   </Menu>
                 ) : (
                   <button
+                    id="loginButton"
                     type="button"
                     onClick={openModal}
                     className="px-4 py-1 ml-4 text-white transition rounded-md bg-rose-600 hover:bg-rose-500 focus:outline-none focus:ring-4 focus:ring-rose-500 focus:ring-opacity-50"
@@ -182,11 +188,12 @@ const Layout = ({ children = null }) => {
 
         <main className="container flex-grow mx-auto">
           <div className="px-4 py-12">
-            {typeof children === 'function' ? children(openModal) : children}
+            {typeof children === "function" ? children(openModal) : children}
           </div>
         </main>
 
         <AuthModal show={showModal} onClose={closeModal} />
+        {session && !session.user.username && <DetailsModal show={true} />}
       </div>
     </>
   );

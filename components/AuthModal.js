@@ -1,23 +1,30 @@
-import { Fragment, useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import PropTypes from 'prop-types';
-import * as Yup from 'yup';
-import { toast } from 'react-hot-toast';
-import { Formik, Form } from 'formik';
-import { Dialog, Transition } from '@headlessui/react';
-import { SparklesIcon, MailOpenIcon, XIcon } from '@heroicons/react/outline';
-import Input from './Input';
-import { signIn } from 'next-auth/react';
+import { Fragment, useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import PropTypes from "prop-types";
+import * as Yup from "yup";
+import { toast } from "react-hot-toast";
+import { Formik, Form } from "formik";
+import { Dialog, Transition } from "@headlessui/react";
+import { CakeIcon, MailOpenIcon, XIcon } from "@heroicons/react/outline";
+import Input from "./Input";
+import { signIn } from "next-auth/react";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 const SignInSchema = Yup.object().shape({
   email: Yup.string()
     .trim()
-    .email('Invalid email')
-    .required('This field is required'),
+    .email("Invalid email")
+    .required("This field is required"),
 });
 
-const Confirm = ({ show = false, email = '' }) => (
+const UserAndPassSchema = Yup.object().shape({
+  username: Yup.string().trim().required("Username is required"),
+  password: Yup.string().trim().required("Password is Required"),
+});
+
+const Confirm = ({ show = false, email = "" }) => (
   <Transition appear show={show} as={Fragment}>
     <div className="fixed inset-0 z-50">
       <Transition.Child
@@ -51,7 +58,7 @@ const Confirm = ({ show = false, email = '' }) => (
             </h3>
 
             <p className="mt-4 text-lg text-center">
-              We emailed a magic link to <strong>{email ?? ''}</strong>.
+              We emailed a magic link to <strong>{email ?? ""}</strong>.
               <br />
               Check your inbox and click the link in the email to login or sign
               up.
@@ -67,14 +74,15 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
   const [disabled, setDisabled] = useState(false);
   const [showConfirm, setConfirm] = useState(false);
   const [showSignIn, setShowSignIn] = useState(false);
+  const router = useRouter();
 
   const signInWithEmail = async ({ email }) => {
     let toastId;
     try {
-      toastId = toast.loading('Loading...');
+      toastId = toast.loading("Loading...");
       setDisabled(true);
       // Perform sign in
-      const { error } = await signIn('email', {
+      const { error } = await signIn("email", {
         redirect: false,
         callbackUrl: window.location.href,
         email,
@@ -86,23 +94,52 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
       setConfirm(true);
       toast.dismiss(toastId);
     } catch (err) {
-      toast.error('Unable to sign in', { id: toastId });
+      toast.error("Unable to sign in", { id: toastId });
+    } finally {
+      setDisabled(false);
+    }
+  };
+
+  const signInWithUserAndPass = async ({ username, password }) => {
+    let toastId;
+    try {
+      toastId = toast.loading("Loading...");
+      setDisabled(true);
+
+      const user = await axios.post(`/api/user-pass`, { username, password });
+      if (user.data.email) {
+        const { error } = await signIn("email", {
+          redirect: false,
+          callbackUrl: `${window.location.href}?user-pass=true`,
+          email: user.data.email,
+        });
+
+        const link = (await axios.get(`/api/link?email=${user.data.email}`))
+          .data;
+
+        router.push(link.value);
+        await axios.delete(`/api/link?id=${link.linkId}`);
+      }
+
+      toast.dismiss(toastId);
+    } catch (err) {
+      toast.error("Unable to sign in", { id: toastId });
     } finally {
       setDisabled(false);
     }
   };
 
   const signInWithGoogle = () => {
-    toast.loading('Redirecting...');
+    toast.loading("Redirecting...");
     setDisabled(true);
     // Perform sign in
-    signIn('google', {
+    signIn("google", {
       callbackUrl: window.location.href,
     });
   };
-  
+
   const closeModal = () => {
-    if (typeof onClose === 'function') {
+    if (typeof onClose === "function") {
       onClose();
     }
   };
@@ -166,6 +203,7 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
             <div className="relative inline-block w-full max-w-md my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl sm:rounded-md">
               {/* Close icon */}
               <button
+                id="closeModal"
                 onClick={closeModal}
                 className="absolute p-1 transition rounded-md top-2 right-2 shrink-0 hover:bg-gray-100 focus:outline-none"
               >
@@ -177,9 +215,12 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
                   <div className="flex justify-center">
                     <Link href="/">
                       <a className="flex items-center space-x-1">
-                        <SparklesIcon className="w-8 h-8 shrink-0 text-rose-500" />
-                        <span className="text-xl font-semibold tracking-wide">
-                          Supa<span className="text-rose-500">Vacation</span>
+                        <CakeIcon className="w-8 h-8 shrink-0 text-rose-500" />
+                        <span
+                          className="text-xl font-semibold tracking-wide"
+                          data-testid="favoriteFoodsLogo"
+                        >
+                          Favorite<span className="text-rose-500">Foods</span>
                         </span>
                       </a>
                     </Link>
@@ -189,19 +230,20 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
                     as="h3"
                     className="mt-6 text-lg font-bold text-center sm:text-2xl"
                   >
-                    {showSignIn ? 'Welcome back!' : 'Create your account'}
+                    {showSignIn ? "Welcome back!" : "Create your account"}
                   </Dialog.Title>
 
                   {!showSignIn ? (
                     <Dialog.Description className="mt-2 text-base text-center text-gray-500">
-                      Please create an account to list your homes and bookmark
-                      your favorite ones.
+                      Please create an account to list your Favorite Foods and
+                      bookmark your favorite ones.
                     </Dialog.Description>
                   ) : null}
 
                   <div className="mt-10">
                     {/* Sign with Google */}
                     <button
+                      id="googleButton"
                       disabled={disabled}
                       onClick={() => signInWithGoogle()}
                       className="h-[46px] w-full mx-auto border rounded-md p-2 flex justify-center items-center space-x-2 text-gray-500 hover:text-gray-600 hover:border-gray-400 hover:bg-gray-50 focus:outline-none focus:ring-4 focus:ring-gray-400 focus:ring-opacity-25 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:text-gray-500 disabled:hover:bg-transparent disabled:hover:border-gray-200 transition-colors"
@@ -212,12 +254,14 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
                         width={32}
                         height={32}
                       />
-                      <span>Sign {showSignIn ? 'in' : 'up'} with Google</span>
+                      <span data-testid="google">
+                        Sign {showSignIn ? "in" : "up"} with Google
+                      </span>
                     </button>
 
                     {/* Sign with email */}
                     <Formik
-                      initialValues={{ email: '' }}
+                      initialValues={{ email: "" }}
                       validationSchema={SignInSchema}
                       validateOnBlur={false}
                       onSubmit={signInWithEmail}
@@ -227,9 +271,10 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
                           <Input
                             name="email"
                             type="email"
-                            placeholder="elon@spacex.com"
+                            placeholder="Email"
                             disabled={disabled}
                             spellCheck={false}
+                            data-testid="emailInput"
                           />
 
                           <button
@@ -237,54 +282,143 @@ const AuthModal = ({ show = false, onClose = () => null }) => {
                             disabled={disabled || !isValid}
                             className="w-full px-8 py-2 mt-6 text-white transition rounded-md bg-rose-600 focus:outline-none focus:ring-4 focus:ring-rose-600 focus:ring-opacity-50 hover:bg-rose-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-rose-600"
                           >
-                            {isSubmitting
-                              ? 'Loading...'
-                              : `Sign ${showSignIn ? 'in' : 'up'}`}
+                            {isSubmitting ? "Loading..." : "Send Email"}
                           </button>
 
-                          <p className="mt-2 text-sm text-center text-gray-500">
-                            {showSignIn ? (
-                              <>
-                                Don&apos;t have an account yet?{' '}
-                                <button
-                                  type="button"
-                                  disabled={disabled}
-                                  onClick={() => {
-                                    setShowSignIn(false);
-                                    resetForm();
-                                  }}
-                                  className="font-semibold underline underline-offset-1 text-rose-500 hover:text-rose-600 disabled:hover:text-rose-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                  Sign up
-                                </button>
-                                .
-                              </>
-                            ) : (
-                              <>
-                                Already have an account?{' '}
-                                <button
-                                  type="button"
-                                  disabled={disabled}
-                                  onClick={() => {
-                                    setShowSignIn(true);
-                                    resetForm();
-                                  }}
-                                  className="font-semibold underline underline-offset-1 text-rose-500 hover:text-rose-600 disabled:hover:text-rose-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                  Log in
-                                </button>
-                                .
-                              </>
-                            )}
-                          </p>
+                          {!showSignIn && (
+                            <p className="mt-2 text-sm text-center text-gray-500">
+                              {showSignIn ? (
+                                <>
+                                  Don&apos;t have an account yet?{" "}
+                                  <button
+                                    type="button"
+                                    disabled={disabled}
+                                    onClick={() => {
+                                      setShowSignIn(false);
+                                      resetForm();
+                                    }}
+                                    className="font-semibold underline underline-offset-1 text-rose-500 hover:text-rose-600 disabled:hover:text-rose-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    Sign up
+                                  </button>
+                                  .
+                                </>
+                              ) : (
+                                <>
+                                  Already have an account?{" "}
+                                  <button
+                                    id="changeToLogin"
+                                    type="button"
+                                    disabled={disabled}
+                                    onClick={() => {
+                                      setShowSignIn(true);
+                                      resetForm();
+                                    }}
+                                    className="font-semibold underline underline-offset-1 text-rose-500 hover:text-rose-600 disabled:hover:text-rose-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    Log in
+                                  </button>
+                                  .
+                                </>
+                              )}
+                            </p>
+                          )}
 
                           <Confirm
                             show={showConfirm}
-                            email={values?.email ?? ''}
+                            email={values?.email ?? ""}
                           />
                         </Form>
                       )}
                     </Formik>
+
+                    {/* Sign with user and pass */}
+                    {showSignIn && (
+                      <Formik
+                        initialValues={{ username: "", password: "" }}
+                        validationSchema={UserAndPassSchema}
+                        validateOnBlur={false}
+                        onSubmit={signInWithUserAndPass}
+                      >
+                        {({ isSubmitting, isValid, values, resetForm }) => (
+                          <Form className="mt-10">
+                            <Input
+                              name="username"
+                              type="text"
+                              placeholder="Username"
+                              disabled={disabled}
+                              spellCheck={false}
+                              data-testid="usernameInput"
+                              id="usernameInput"
+                            />
+
+                            <Input
+                              name="password"
+                              type="password"
+                              placeholder="Password"
+                              disabled={disabled}
+                              spellCheck={false}
+                              className="mt-1"
+                              data-testid="passwordInput"
+                              id="passwordInput"
+                            />
+
+                            <button
+                              type="submit"
+                              disabled={disabled || !isValid}
+                              className="w-full px-8 py-2 mt-6 text-white transition rounded-md bg-rose-600 focus:outline-none focus:ring-4 focus:ring-rose-600 focus:ring-opacity-50 hover:bg-rose-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-rose-600"
+                              data-testid="signInButton"
+                              id="signInButton"
+                            >
+                              {isSubmitting
+                                ? "Loading..."
+                                : `Sign ${showSignIn ? "in" : "up"}`}
+                            </button>
+
+                            <p className="mt-2 text-sm text-center text-gray-500">
+                              {showSignIn ? (
+                                <>
+                                  Don&apos;t have an account yet?{" "}
+                                  <button
+                                    type="button"
+                                    disabled={disabled}
+                                    onClick={() => {
+                                      setShowSignIn(false);
+                                      resetForm();
+                                    }}
+                                    className="font-semibold underline underline-offset-1 text-rose-500 hover:text-rose-600 disabled:hover:text-rose-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    Sign up
+                                  </button>
+                                  .
+                                </>
+                              ) : (
+                                <>
+                                  Already have an account?{" "}
+                                  <button
+                                    type="button"
+                                    disabled={disabled}
+                                    onClick={() => {
+                                      setShowSignIn(true);
+                                      resetForm();
+                                    }}
+                                    className="font-semibold underline underline-offset-1 text-rose-500 hover:text-rose-600 disabled:hover:text-rose-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    Log in
+                                  </button>
+                                  .
+                                </>
+                              )}
+                            </p>
+
+                            <Confirm
+                              show={showConfirm}
+                              email={values?.email ?? ""}
+                            />
+                          </Form>
+                        )}
+                      </Formik>
+                    )}
                   </div>
                 </div>
               </div>

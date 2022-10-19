@@ -1,42 +1,42 @@
 [
   {
-    "id": "001",
-    "image": "/homes/space.jpeg",
-    "title": "Peaceful retreat in Space with stunning view of Earth",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "guests": 2,
-    "beds": 1,
-    "baths": 1,
-    "price": 2500
+    "title": "Adobo",
+    "description": "It’s the Filipino dish everybody knows — the mighty adobo. It is made by stewing meat (usually chicken, pork, or a combination of both) in soy sauce and vinegar, adding peppercorns and bay leaves for that special flavour. Bonus leftovers tip: pull the meat from the bone and fry ’til crispy for some tasty adobo flakes."
   },
   {
-    "id": "002",
-    "image": "/homes/amsterdam.jpeg",
-    "title": "Luxury houseboat in Amsterdam center",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "guests": 4,
-    "beds": 3,
-    "baths": 2,
-    "price": 1500
+    "title": "Kare-Kare",
+    "description": "This rich stew is made with peanut sauce and, customarily, oxtail, but other meatier cuts of beef can also be added in. Many Filipinos will consider kare-kare incomplete without a serving of bagoong (fermented seafood paste) on the side."
   },
   {
-    "id": "003",
-    "image": "/homes/providence.jpeg",
-    "title": "Clean and modern apartment in downtown Providence, RI",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "guests": 2,
-    "beds": 1,
-    "baths": 1,
-    "price": 170
+    "title": "Lechon",
+    "description": "One of the top contenders among the best Filipino dishes (alongside adobo) is perhaps the famous lechon. After all, it is hard to top a tasty, fully-roasted pig with perfectly crisp skin and juicy meat. Find the best of this sinful treat on the island of Cebu, but this is almost always served at any grand Pinoy gathering or fiesta."
   },
   {
-    "id": "004",
-    "image": "/homes/shanghai.jpeg",
-    "title": "Entire rental unit on the Bund - Shanghai",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "guests": 6,
-    "beds": 3,
-    "baths": 3,
-    "price": 765
+    "title": "Sinigang",
+    "description": "Sinigang is a Pinoy classic. A delicious sour broth usually made tangy by tamarind (sometimes kamias), it’s filled with different vegetables and a meat of choice. Popular variants include sinigang na baboy (pork), sinigang na hipon (shrimp), and sinigang na isda (fish)."
+  },
+  {
+    "title": "Crispy Pata",
+    "description": "If you can’t get your hands on an entire lechon, a scrumptious crispy pata is an equally sinful alternative. It’s a dish that takes the entire pig leg and deep fries it to perfection. Serve with a soy-vinegar dipping sauce on the side with some chopped up garlic and chilli, and you’re on the road to your next favourite guilty pleasure."
+  },
+  {
+    "title": "Sisig",
+    "description": "Served sizzling on a hot stone plate, sisig is a favorite pulutan (beer chow) among Filipinos. The meat is primarily chopped up parts of the pigs’ face — in the Philippines, no cut of the animal goes to waste. Some recipes use either mayonnaise or raw egg (to be mixed in while hot) to give it a creamier texture but the classic way is to incorporate pig’s brain into the dish."
+  },
+  {
+    "title": "Pork Barbecue",
+    "description": "A merienda (snack in between meals) favourite in the Philippines is Pinoy pork barbecue. While this skewered sweet meat goes wonderfully well with the ubiquitous plain rice during meals, there’s also nothing like catching yourself hungry in the middle of the afternoon and conveniently walking down the street over to the vendors grilling them road-side for only PHP15 ($0.30) a stick."
+  },
+  {
+    "title": "Bistek Tagalog",
+    "description": "Bistek Tagalog or the Filipino beef steak is a delicious blend of salty, sour, and sweet flavours. Thinly sliced beef is marinated in a mixture of mainly soy sauce and kalamansi, fried, and then topped with caramelised onions. The onions are just sweet enough to cut into and balance the strong salty and acidic tastes infused into the meat."
+  },
+  {
+    "title": "Fried Lumpia",
+    "description": "Another dish frequently expected to make an appearance at Filipino gatherings is the Pinoy’s version of the egg roll, lumpia. These deep-fried rolls are filled with minced meat and vegetables and served with a sweet and sour dipping sauce. Being so easy to make, lumpia is almost automatically part of a Filipino feast when food for the large Filipino family has to be cooked in copious amounts."
+  },
+  {
+    "title": "Chicken Inasal",
+    "description": "This flavourful grilled chicken, the best of which is made in the city of Bacolod, sits in a special marinade of vinegar, kalamansi, ginger, and lemongrass. It owes its appetising golden-brown colour to annatto oil, which is also poured over the plain rice it is served with. Dip the chicken in sinamak (spiced vinegar) for some extra zest."
   }
 ]

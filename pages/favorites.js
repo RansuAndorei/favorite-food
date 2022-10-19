@@ -17,32 +17,32 @@ export async function getServerSideProps(context) {
     };
   }
 
-  const favoriteHomes = await prisma.favorite.findMany({
+  const favoriteFoods = await prisma.favorite.findMany({
     where: { userId: session.user.id },
     include: {
-      home: true,
+      food: true,
     },
   });
 
-  // Pass the data to the Homes component
+  // Pass the data to the Foods component
   return {
     props: {
-      homes: JSON.parse(
-        JSON.stringify(favoriteHomes.map((favorite) => favorite.home))
+      foods: JSON.parse(
+        JSON.stringify(favoriteFoods.map((favorite) => favorite.food))
       ),
     },
   };
 }
 
-const Favorites = ({ homes = [] }) => {
+const Favorites = ({ foods = [] }) => {
   return (
     <Layout>
       <h1 className="text-xl font-medium text-gray-800">Your Favorites</h1>
       <p className="text-gray-500">
-        Manage your homes and update your favorites
+        Manage your Favorite Foods and update your favorites
       </p>
       <div className="mt-8">
-        <Grid homes={homes} />
+        <Grid foods={foods} />
       </div>
     </Layout>
   );

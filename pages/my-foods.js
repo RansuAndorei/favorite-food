@@ -1,11 +1,14 @@
 import Layout from "@/components/Layout";
 import Grid from "@/components/Grid";
 import { prisma } from "@/lib/prisma";
+import { getSession } from "next-auth/react";
 
-export async function getServerSideProps() {
+export async function getServerSideProps(context) {
   // Get all foods
+  const session = await getSession(context);
+
   const foods = await prisma.food.findMany({
-    where: { isPublic: true },
+    where: { ownerId: session.user.id },
   });
   // Pass the data to the Home page
   return {

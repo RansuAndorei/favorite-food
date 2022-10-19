@@ -14,12 +14,11 @@ export default async function handler(req, res) {
       const favorites = await prisma.favorite.findMany({
         where: { userId: userId },
         select: {
-          homeId: true,
+          foodId: true,
         },
       });
       res.status(200).json(favorites);
     } catch (e) {
-      console.log(e);
       res.status(500).json({ message: "Something went wrong" });
     }
   } else if (req.method === "POST") {
@@ -28,7 +27,7 @@ export default async function handler(req, res) {
       const favorite = await prisma.favorite.createMany({
         data: {
           userId,
-          homeId: addId,
+          foodId: addId,
         },
       });
       res.status(200).json(favorite);
@@ -45,7 +44,7 @@ export default async function handler(req, res) {
         },
         where: {
           userId: userId,
-          homeId: deleteId,
+          foodId: deleteId,
         },
       });
       const favorite = await prisma.favorite.delete({

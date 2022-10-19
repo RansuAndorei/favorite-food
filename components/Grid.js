@@ -1,12 +1,12 @@
 import PropTypes from "prop-types";
-import Card from "@/components/Card";
+import Card from "../components/Card";
 import { ExclamationIcon } from "@heroicons/react/outline";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import axios from "axios";
 
-const Grid = ({ homes = [] }) => {
-  const isEmpty = homes.length === 0;
+const Grid = ({ foods = [] }) => {
+  const isEmpty = foods.length === 0;
   const { data: session } = useSession();
   const [favorites, setFavorites] = useState([]);
 
@@ -16,13 +16,12 @@ const Grid = ({ homes = [] }) => {
         const favoriteList = (
           await axios.get(`/api/${session.user?.id}/favorites`)
         ).data;
-        setFavorites(favoriteList.map((favorite) => favorite.homeId));
+        setFavorites(favoriteList.map((favorite) => favorite.foodId));
       })();
     }
   }, [session]);
 
   const toggleFavorite = async (id) => {
-    console.log(id);
     if (favorites.includes(id)) {
       setFavorites((prev) => prev.filter((prev) => prev !== id));
       await axios.delete(`/api/${session.user.id}/favorites`, {
@@ -41,12 +40,12 @@ const Grid = ({ homes = [] }) => {
     </p>
   ) : (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {homes.map((home) => (
+      {foods.map((food) => (
         <Card
-          key={home.id}
-          {...home}
+          key={food.id}
+          {...food}
           onClickFavorite={toggleFavorite}
-          favorite={!!favorites.includes(home.id)}
+          favorite={!!favorites.includes(food.id)}
         />
       ))}
     </div>
@@ -54,7 +53,7 @@ const Grid = ({ homes = [] }) => {
 };
 
 Grid.propTypes = {
-  homes: PropTypes.array,
+  foods: PropTypes.array,
 };
 
 export default Grid;
